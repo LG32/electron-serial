@@ -1,0 +1,52 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SerialPost COM</title>
+    <script src="../../public/js/flexible.js"></script>
+    <!-- <script src="./welcome.js"></script> -->
+    <link rel="stylesheet" href="../../public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/index.css">
+    <link rel="stylesheet" href="./welcome.css">
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+</head>
+
+<body>
+    <div class="container" id="app">
+        <div class="login-box align-items-center" style="display: block">
+            <div class="login-title">
+                <div class="login-txt">{{welcomeStr}}</div>
+            </div>
+            <div class="center-border" style="margin-top: 135px;">
+                <button type="button" class="btn btn-primary border" id="serialTest">调试端口</button>
+                <button type="button" class="btn btn-primary border" id="initSerial">初始化端口</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    window.$ = window.jQuery = require('../../public/js/jquery.min.js');
+    new Vue({
+        el: '#app',
+        data: {
+            welcomeStr: 'SerialPost demo!'
+        }
+    })
+    $(document).ready(function () {
+        $("#serialTest").click(() => {
+            alert("点击serialTest");
+            $(location).attr('href', "../../main/index.html");
+        }
+        )
+        $("#initSerial").click(() => {
+            alert("点击initSerial");
+            $(location).attr('href', "../initSerial/initSerial.html");
+        }
+        )
+    });
+</script>
+
+</html>
