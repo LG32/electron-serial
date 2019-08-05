@@ -44,14 +44,21 @@
                             <label for="inputModelId" class="col-sm-2 control-label">设备ID</label>
                             <div class="col-sm-8">
                                 <input class="form-control" id="inputId" placeholder="设备ID" value="{{inputModelId}}"
-                                    v-model="inputModelId" ref="inputId">
+                                    v-model="inputModelId" ref="inputId" v-if="checkState" readonly="readonly">
+
+                                <input class="form-control" id="inputId" placeholder="设备ID" value="{{inputModelId}}"
+                                    v-model="inputModelId" ref="inputId" v-if="!checkState">
+
+                                <!-- <input class="form-control" id="inputId" placeholder="设备ID" value="{{inputModelId}}"
+                                    v-model="inputModelId" ref="inputId"> -->
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-8">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox"> 自动生成ID
+                                        <input type="checkbox" checked="1" id="autoCheckbox"
+                                            onclick="vue.checkboxListencer()" v-model="checkState"> 自动生成ID
                                     </label>
                                 </div>
                             </div>
@@ -85,13 +92,14 @@
                 <h4 class="send-header">
                     <label>接受信息</label>
                 </h4>
-                <div class="receive-windows">     
+                <div class="receive-windows">
                 </div>
             </div>
         </div>
     </div>
 </body>
 <script>
+    var t1;
     var vue = new Vue({
         el: '#form',
         data: {
@@ -100,10 +108,12 @@
             inputModelName: '',
             inputModelRemark: '',
             message: '',
+            checkState: true,
         },
 
         created: function () {
             console.log('vue is running' + this.welcomeStr);
+            getModelInfoRequest();
         },
 
         methods: {
@@ -112,23 +122,40 @@
                 alert('设备id' + this.inputModelId +
                     ' 设备名称' + this.inputModelName +
                     ' 设备备注' + this.inputModelRemark);
+
+                    if(t1 != undefined){
+                        window.clearTimeout(t1);
+                    }
             },
 
             startInit: function () {
                 console.log("点击开始初始化");
+                for(var i = 0; i < 10; i++){
+                    t1 = window.setTimeout("startInitSerial()", 500);
+                }
+                $('.receive-windows').append("初始化信号发送完成，请注意信号灯是否常亮!");
             },
 
             testVue: function () {
                 console.log("测试vue点击事件");
                 this.inputModelId = '000';
                 alert("this.inputModelName:" + this.inputModelName);
-                check();
+                // check();
             },
 
-            serialPostCommListencer: function(data){
+            serialPostCommListencer: function (data) {
                 console.log("点击端口连接");
                 serialComm(data);
-            }
+            },
+
+            checkboxListencer: function () {
+                if (this.checkState) {
+                    this.checkState = false;
+                } else {
+                    this.checkState = true;
+                }
+                console.log("checkState is chance: " + this.checkState);
+            },
         }
     })
 </script>

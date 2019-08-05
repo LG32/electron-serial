@@ -4,6 +4,8 @@ window.$ = window.jQuery = require('../../public/js/jquery.min.js');
 let SerialPort = require('serialport');
 let port = null;
 let portObj = null;
+var xmlHttp;
+
 
 SerialPort.list((err, ports) => {
   for (let item of ports) {
@@ -18,24 +20,15 @@ function serialComm(data) {
   console.log("点击确定事件")
   console.log(COM);
   console.log(BaudRate);
-  // port = new SerialPort(COM, {
-  //   baudRate: parseInt(BaudRate)
-  // });
   $('.receive-windows').text(`打开串口: ${COM}, 波特率: ${BaudRate}`);
   $('.receive-windows').append('<br/>=======================================<br/>');
-  
-  portObj = new SerialPort(COM, { baudRate: parseInt(BaudRate)});
+
+  portObj = new SerialPort(COM, { baudRate: parseInt(BaudRate) });
   // port.open();
-  
+
 
   portObj.on('open', function () {
     $('.receive-windows').append("端口正在开启！");
-    portObj.write('main screen turn on ', function (err) {
-      if (err) {
-        return console.log('Error on write: ', err.message);
-      }
-      console.log('message written');
-    });
 
     if (portObj.isOpen) {
       $('.receive-windows').append('端口成功连接！！！');
@@ -78,14 +71,48 @@ $('.btn-reset').click(() => {
   $('.input-send-data').val('');
 })
 
-var xmlHttp;
+//开始初始化设备
+function startInitSerial() {
+
+  var head = [0xAF, 0x49, 0x35, 0xEA, 0xF0];
+  var end = [0x31, 0x24, 0x63, 0xA4];
+  var model_id = vue.inputModelId;
+  var middle = stringToBytes(model_id);
+  var serial_number = new Array();
+
+  for (var i = 0; i < 13; i++) {
+    if (i < 5)
+      serial_number[i] = head[i];
+    if (i >= 5 && i < 9)
+      serial_number[i] = middle[i - 5];
+    if (i >= 9)
+      serial_number[i] = end[i - 9];
+  }
+
+  portObj.write(serial_number, function (err) {
+    if (err) {
+      return console.log('Error on write: ', err.message);
+    }
+    console.log('message written');
+  });
+}
+
+//字符串转byte数组
+function stringToBytes(str) {
+  var num = str + "";
+  var arr = new Array();
+  for (var i = 0; i < num.length; i++) {
+    arr.push(num.charCodeAt(i));
+  }
+  return arr;
+}
 
 //创建ajax的核心对象creatxmlhttpRequest
 function createXMLhttpRequest() {
   xmlHttp = new XMLHttpRequest();
 }
 
-function check() {
+function getModelInfoRequest() {
   // 发送请求
   sendRequest("http://localhost:8080/getModelInfo");
 }
@@ -113,5 +140,7 @@ function callBack() {
         + " model_serial_number:" + responseData[i].serial_number + "\n";
     }
     $('.receive-windows').append(message);
+    console.log(responseData[responseData.length - 1].model_id);
+    vue.inputModelId = responseData[responseData.length - 1].model_id;
   }
 }
