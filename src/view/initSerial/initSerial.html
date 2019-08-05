@@ -83,7 +83,7 @@
                     <div class="btn-box">
                         <div class="btn btn-warning btn-send" onclick="vue.startInit()">开始初始化</div>&nbsp&nbsp&nbsp
                         <div class="btn btn-danger btn-reset" onclick="vue.finishInit()">完成初始化</div>&nbsp&nbsp&nbsp
-                        <div class="btn btn-normal" onclick="vue.testVue()">测试vue</div>
+                        <!-- <div class="btn btn-normal" onclick="vue.testVue()">测试vue</div> -->
                     </div>
                 </div>
             </div>
@@ -126,6 +126,7 @@
                     if(t1 != undefined){
                         window.clearTimeout(t1);
                     }
+                    rq_finishInit(this.inputModelId);
             },
 
             startInit: function () {

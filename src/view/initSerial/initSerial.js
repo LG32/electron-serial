@@ -5,6 +5,7 @@ let SerialPort = require('serialport');
 let port = null;
 let portObj = null;
 var xmlHttp;
+var urlHead = "http://localhost:8080/";
 
 
 SerialPort.list((err, ports) => {
@@ -24,8 +25,6 @@ function serialComm(data) {
   $('.receive-windows').append('<br/>=======================================<br/>');
 
   portObj = new SerialPort(COM, { baudRate: parseInt(BaudRate) });
-  // port.open();
-
 
   portObj.on('open', function () {
     $('.receive-windows').append("端口正在开启！");
@@ -34,6 +33,7 @@ function serialComm(data) {
       $('.receive-windows').append('端口成功连接！！！');
     } else {
       $('.receive-windows').append('端口连接失败，端口或已被占用。');
+      alert('端口连接失败，端口或已被占用。');
     }
   });
 
@@ -89,12 +89,16 @@ function startInitSerial() {
       serial_number[i] = end[i - 9];
   }
 
-  portObj.write(serial_number, function (err) {
-    if (err) {
-      return console.log('Error on write: ', err.message);
-    }
-    console.log('message written');
-  });
+  if (portObj != null) {
+    portObj.write(serial_number, function (err) {
+      if (err) {
+        return console.log('Error on write: ', err.message);
+      }
+      console.log('message written');
+    });
+  } else {
+    $('.receive-windows').append("请先连接串口！");
+  }
 }
 
 //字符串转byte数组
@@ -107,6 +111,13 @@ function stringToBytes(str) {
   return arr;
 }
 
+function rq_finishInit(inputModelId) {
+  var data = new FormData();
+  data.set("serial_number", inputModelId);
+  postInitModel(data);
+}
+
+
 //创建ajax的核心对象creatxmlhttpRequest
 function createXMLhttpRequest() {
   xmlHttp = new XMLHttpRequest();
@@ -114,7 +125,7 @@ function createXMLhttpRequest() {
 
 function getModelInfoRequest() {
   // 发送请求
-  sendRequest("http://localhost:8080/getModelInfo");
+  sendRequest(urlHead + "getModelInfo");
 }
 
 function sendRequest(url) {
@@ -123,24 +134,54 @@ function sendRequest(url) {
   //   send()里面也可以指定发送内容
   xmlHttp.send(null);   //  发送
   xmlHttp.onreadystatechange = callBack;   //回调函数
+}
 
+function postInitModel(data) {
+  //发送post请求
+  postRequest((urlHead + "initModel"), data);
+}
+
+function postRequest(url, data) {
+  console.log("开始post" + url + "请求");
+  createXMLhttpRequest();
+  xmlHttp.open("post", url, true);
+  xmlHttp.send(data);
+  xmlHttp.onreadystatechange = cb_finishInit;
 }
 
 function callBack() {
   //当 readyState 等于 4 且状态为 200 时，表示响应已就绪：
-  if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-    var responseText = xmlHttp.responseText;
-    console.log(responseText);
-    var jsonObj = jQuery.parseJSON(responseText);
-    var responseData = jsonObj.data;
-    var message = '';
-    for (var i = 0; i < responseData.length; i++) {
-      message = message + "model_id:" + responseData[i].model_id
-        + " model_date:" + responseData[i].model_date
-        + " model_serial_number:" + responseData[i].serial_number + "\n";
+  if(xmlHttp != null){
+    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+      var responseText = xmlHttp.responseText;
+      console.log(responseText);
+      var jsonObj = jQuery.parseJSON(responseText);
+      var responseData = jsonObj.data;
+      var message = '';
+      for (var i = 0; i < responseData.length; i++) {
+        message = message + "model_id:" + responseData[i].model_id
+          + " model_date:" + responseData[i].model_date
+          + " model_serial_number:" + responseData[i].serial_number + "\n";
+      }
+      // $('.receive-windows').append(message);
+      var newId = responseData[responseData.length - 1].model_id + 1;
+      console.log(newId);
+      vue.inputModelId = newId;
     }
-    $('.receive-windows').append(message);
-    console.log(responseData[responseData.length - 1].model_id);
-    vue.inputModelId = responseData[responseData.length - 1].model_id;
+  }
+}
+
+
+function cb_finishInit() {
+
+  if(xmlHttp != null){
+    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+      var responseText = xmlHttp.responseText;
+      console.log(responseText);
+      var jsonObj = jQuery.parseJSON(responseText);
+      var responseData = jsonObj.msg;
+      $('.receive-windows').append(responseData);
+      getModelInfoRequest();
+    } 
   }
 }
