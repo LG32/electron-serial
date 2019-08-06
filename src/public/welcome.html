@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>SerialPost COM</title>
-    <script src="../../public/js/flexible.js"></script>
+    <script src="../public/js/flexible.js"></script>
     <!-- <script src="./welcome.js"></script> -->
-    <link rel="stylesheet" href="../../public/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../public/css/index.css">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./welcome.css">
     <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 </head>
@@ -28,7 +28,7 @@
 </body>
 
 <script type="text/javascript">
-    window.$ = window.jQuery = require('../../public/js/jquery.min.js');
+    window.$ = window.jQuery = require('../public/js/jquery.min.js');
     new Vue({
         el: '#app',
         data: {
@@ -38,15 +38,14 @@
     $(document).ready(function () {
         $("#serialTest").click(() => {
             alert("点击serialTest");
-            $(location).attr('href', "../../main/index.html");
+            $(location).attr('href', "../main/index.html");
         }
         )
         $("#initSerial").click(() => {
             alert("点击initSerial");
-            $(location).attr('href', "../initSerial/initSerial.html");
+            $(location).attr('href', "../main/view/initSerial/initSerial.html");
         }
         )
     });
 </script>
-
 </html>

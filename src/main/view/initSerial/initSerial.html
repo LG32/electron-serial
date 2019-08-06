@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>SerialPost COM</title>
-    <script src="../../public/js/flexible.js"></script>
-    <link rel="stylesheet" href="../../public/css/bootstrap.min.css">
+    <script src="../../../public/js/flexible.js"></script>
+    <link rel="stylesheet" href="../../../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="initSerial.css">
     <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
     <script src="./initSerial.js"></script>
-    <script src="../../public/js/jquery.min.js"></script>
+    <script src="../../../public/js/jquery.min.js"></script>
 </head>
 
 <body>
@@ -38,19 +38,15 @@
                     <small>点击初始化设备按钮后，程序将每5秒发送一次初始化信号，当设备初始化成功后设备将会信号灯常亮，这时点击完成初始化，整个流程完成</small>
                 </h4>
                 <div class="send-windows">
-                    <!-- <textarea class="input-send-data" readonly="readonly"></textarea> -->
                     <form class="form-horizontal" style="width: 100%; margin-top: 10px">
                         <div class="form-group">
                             <label for="inputModelId" class="col-sm-2 control-label">设备ID</label>
                             <div class="col-sm-8">
-                                <input class="form-control" id="inputId" placeholder="设备ID" value="{{inputModelId}}"
-                                    v-model="inputModelId" ref="inputId" v-if="checkState" readonly="readonly">
+                                <input class="form-control" id="inputId" value="{{inputModelId}}"
+                                    v-model="inputModelId" ref="inputId" v-if="checkState" readonly="readonly" placeholder="輸入四位id號">
 
-                                <input class="form-control" id="inputId" placeholder="设备ID" value="{{inputModelId}}"
-                                    v-model="inputModelId" ref="inputId" v-if="!checkState">
-
-                                <!-- <input class="form-control" id="inputId" placeholder="设备ID" value="{{inputModelId}}"
-                                    v-model="inputModelId" ref="inputId"> -->
+                                <input class="form-control" id="inputId" value="{{inputModelId}}"
+                                    v-model="inputModelId" ref="inputId" v-if="!checkState" placeholder="輸入四位id號">
                             </div>
                         </div>
                         <div class="form-group">
@@ -126,7 +122,13 @@
                     if(t1 != undefined){
                         window.clearTimeout(t1);
                     }
-                    rq_finishInit(this.inputModelId);
+
+                    console.log(this.inputModelId.length);
+                    if(this.inputModelId.length == 4){
+                        rq_finishInit(this.inputModelId);
+                    }else{
+                        alert("id長度不合格，請將設置四位id");
+                    }
             },
 
             startInit: function () {
@@ -135,13 +137,6 @@
                     t1 = window.setTimeout("startInitSerial()", 500);
                 }
                 $('.receive-windows').append("初始化信号发送完成，请注意信号灯是否常亮!");
-            },
-
-            testVue: function () {
-                console.log("测试vue点击事件");
-                this.inputModelId = '000';
-                alert("this.inputModelName:" + this.inputModelName);
-                // check();
             },
 
             serialPostCommListencer: function (data) {
