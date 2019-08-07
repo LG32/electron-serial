@@ -40,13 +40,13 @@
                 <div class="send-windows">
                     <form class="form-horizontal" style="width: 100%; margin-top: 10px">
                         <div class="form-group">
-                            <label for="inputModelId" class="col-sm-2 control-label">设备ID</label>
+                            <label for="inputModelId" class="col-sm-2 control-label">模块ID</label>
                             <div class="col-sm-8">
-                                <input class="form-control" id="inputId" value="{{inputModelId}}"
-                                    v-model="inputModelId" ref="inputId" v-if="checkState" readonly="readonly" placeholder="輸入四位id號">
+                                <input class="form-control" id="inputId" value="{{inputModelId}}" v-model="inputModelId"
+                                    ref="inputId" v-if="checkState" readonly="readonly" placeholder="输入四位id号">
 
-                                <input class="form-control" id="inputId" value="{{inputModelId}}"
-                                    v-model="inputModelId" ref="inputId" v-if="!checkState" placeholder="輸入四位id號">
+                                <input class="form-control" id="inputId" value="{{inputModelId}}" v-model="inputModelId"
+                                    ref="inputId" v-if="!checkState" placeholder="输入四位id号">
                             </div>
                         </div>
                         <div class="form-group">
@@ -60,17 +60,24 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputModelName" class="col-sm-2 control-label">设备名称</label>
+                            <label for="inputModelName" class="col-sm-2 control-label">模块名称</label>
                             <div class="col-sm-8">
-                                <input class="form-control" id="inputName" placeholder="设备名称" value="{{inputModelName}}"
-                                    ref="inputName" v-model="inputModelName">
+                                <select class="form-control" id="inputName"></select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputRemark" class="col-sm-2 control-label">设备备注</label>
+                            <label for="inputFirmwareVersion" class="col-sm-2 control-label">固件版本</label>
                             <div class="col-sm-8">
-                                <input class="form-control" id="inputRemark" placeholder="设备备注"
-                                    value="{{inputModelRemark}}" ref="inputRemark" v-model="inputModelRemark">
+                                <input class="form-control" id="inputRemark" placeholder="固件版本"
+                                    value="{{inputFirmwareVersion}}" ref="inputRemark" v-model="inputFirmwareVersion">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputPcbVersion" class="col-sm-2 control-label">Pcb版本</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="inputPcb" placeholder="Pcb版本"
+                                    value="{{inputPcbVersion}}" ref="inputPcb" v-model="inputPcbVersion">
                             </div>
                         </div>
                     </form>
@@ -79,7 +86,6 @@
                     <div class="btn-box">
                         <div class="btn btn-warning btn-send" onclick="vue.startInit()">开始初始化</div>&nbsp&nbsp&nbsp
                         <div class="btn btn-danger btn-reset" onclick="vue.finishInit()">完成初始化</div>&nbsp&nbsp&nbsp
-                        <!-- <div class="btn btn-normal" onclick="vue.testVue()">测试vue</div> -->
                     </div>
                 </div>
             </div>
@@ -102,7 +108,8 @@
             welcomeStr: 'Hello Vue.js!',
             inputModelId: '',
             inputModelName: '',
-            inputModelRemark: '',
+            inputFirmwareVersion: 'v0.0.1',
+            inputPcbVersion: 'v0.0.1',
             message: '',
             checkState: true,
         },
@@ -115,28 +122,53 @@
         methods: {
             finishInit: function () {
                 console.log("点击完成初始化");
-                alert('设备id' + this.inputModelId +
-                    ' 设备名称' + this.inputModelName +
-                    ' 设备备注' + this.inputModelRemark);
+                var x = document.getElementById("inputName");
+                var modelKindId = x.selectedIndex + 1;
+                var inputModelIdStr = this.inputModelId + '';
+                this.inputModelName = $('#inputName option:selected').text();
+                console.log("inputModelIdStr" + inputModelIdStr);
+                console.log("inputModelName" + this.inputModelName);
+                console.log("inputFirmwareVersion" + this.inputFirmwareVersion);
+                console.log("inputPcbVersion" + this.inputPcbVersion);
 
-                    if(t1 != undefined){
+                if (inputModelIdStr.length == 4 &&
+                    this.inputFirmwareVersion != '' &&
+                    this.inputPcbVersion != '') {
+
+                    console.log("开始新增请求");
+                    alert('模块id' + this.inputModelId +
+                        ' 模块名称' + this.inputModelName +
+                        ' 固件版本' + this.inputFirmwareVersion +
+                        ' Pcb版本' + this.inputPcbVersion);
+
+                    if (t1 != undefined) {
                         window.clearTimeout(t1);
                     }
 
-                    console.log(this.inputModelId.length);
-                    if(this.inputModelId.length == 4){
-                        rq_finishInit(this.inputModelId);
-                    }else{
-                        alert("id長度不合格，請將設置四位id");
-                    }
+                    rq_finishInit(this.inputModelId, modelKindId, this.inputModelName, this.inputFirmwareVersion, this.inputPcbVersion);
+
+                } else if (inputModelIdStr.length != 4) {
+                    alert("请输入四位id");
+                } else if (this.inputPcbVersion == '' || this.inputFirmwareVersion == '') {
+                    alert("请补全信息");
+                }
             },
 
             startInit: function () {
                 console.log("点击开始初始化");
-                for(var i = 0; i < 10; i++){
-                    t1 = window.setTimeout("startInitSerial()", 500);
+                console.log(this.inputModelId);
+                var inputModelIdStr = this.inputModelId + '';
+
+                if (inputModelIdStr.length == 4) {
+                    $('.receive-windows').append("初始化信号发送完成，请注意信号灯是否常亮!");
+                    for (var i = 0; i < 10; i++) {
+                        t1 = window.setTimeout("startInitSerial()", 500);
+                    }
+                } else {
+                    $('.receive-windows').append("请输入四位id");
+                    alert("请输入四位id");
                 }
-                $('.receive-windows').append("初始化信号发送完成，请注意信号灯是否常亮!");
+
             },
 
             serialPostCommListencer: function (data) {
@@ -155,4 +187,5 @@
         }
     })
 </script>
+
 </html>
