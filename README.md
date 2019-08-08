@@ -10,7 +10,7 @@
 
 <p>問題：打包完成后應用程序空白並提示not allowed to load local resource,這傻逼問題困擾了我一天了，結果我認爲應該是在打包時沒有將資源打進包中的原因。</p>
 <p>解決方法：在package.json文件中的files中添加上資源存放的路徑。</p>
-> ![Image text](./files.png)
+<image src="https://github.com/LG32/electron-serial/blob/master/files.png"></image>
 <p>參考博客<a href="https://blog.csdn.net/xidianyueyong/article/details/98182687">https://blog.csdn.net/xidianyueyong/article/details/98182687</a></p>
 #### Build Setup
 
