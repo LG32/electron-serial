@@ -19,7 +19,7 @@
             <div class="select-data">
                 <div class="form-group">
                     <label for="disabledSelect">选择串口</label>
-                    <select id="disabledSelect" class="form-control com">
+                    <select id="disabledSelect" class="form-control com" onclick="vue.freshPortListencer()">
                     </select>
                 </div>
                 <div class="form-group">
@@ -86,6 +86,7 @@
                     <div class="btn-box">
                         <div class="btn btn-warning btn-send" onclick="vue.startInit()">开始初始化</div>&nbsp&nbsp&nbsp
                         <div class="btn btn-danger btn-reset" onclick="vue.finishInit()">完成初始化</div>&nbsp&nbsp&nbsp
+                        <div class="btn btn-normal" onclick="vue.testBtn()">测试</div>
                     </div>
                 </div>
             </div>
@@ -112,10 +113,12 @@
             inputPcbVersion: 'v0.0.1',
             message: '',
             checkState: true,
+            freshFlag: true,
         },
 
         created: function () {
             console.log('vue is running' + this.welcomeStr);
+            // freshPort();
             getModelInfoRequest();
         },
 
@@ -131,7 +134,7 @@
                 console.log("inputFirmwareVersion" + this.inputFirmwareVersion);
                 console.log("inputPcbVersion" + this.inputPcbVersion);
 
-                if (inputModelIdStr.length == 4 &&
+                if (inputModelIdStr.length == 8 &&
                     this.inputFirmwareVersion != '' &&
                     this.inputPcbVersion != '') {
 
@@ -147,8 +150,8 @@
 
                     rq_finishInit(this.inputModelId, modelKindId, this.inputModelName, this.inputFirmwareVersion, this.inputPcbVersion);
 
-                } else if (inputModelIdStr.length != 4) {
-                    alert("请输入四位id");
+                } else if (inputModelIdStr.length != 8) {
+                    alert("请输入8位十六进制id");
                 } else if (this.inputPcbVersion == '' || this.inputFirmwareVersion == '') {
                     alert("请补全信息");
                 }
@@ -159,16 +162,21 @@
                 console.log(this.inputModelId);
                 var inputModelIdStr = this.inputModelId + '';
 
-                if (inputModelIdStr.length == 4) {
+                if (inputModelIdStr.length == 8) {
                     $('.receive-windows').append("初始化信号发送完成，请注意信号灯是否常亮!");
                     for (var i = 0; i < 10; i++) {
                         t1 = window.setTimeout("startInitSerial()", 500);
                     }
                 } else {
-                    $('.receive-windows').append("请输入四位id");
-                    alert("请输入四位id");
+                    $('.receive-windows').append("请输入8位十六进制id");
+                    alert("请输入8位十六进制id");
                 }
 
+            },
+
+            testBtn: function(){
+              u16Count();
+              u16CountToString('f0000000');
             },
 
             serialPostCommListencer: function (data) {
@@ -184,8 +192,18 @@
                 }
                 console.log("checkState is chance: " + this.checkState);
             },
+
+            freshPortListencer: function(){
+                if(this.freshFlag){
+                    console.log("刷新串口");
+                    freshPort();
+                    this.freshFlag = false;
+                }else{
+                    this.freshFlag = true;
+                }
+                
+            }
         }
     })
 </script>
-
 </html>

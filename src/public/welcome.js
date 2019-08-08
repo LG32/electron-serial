@@ -64,6 +64,7 @@ app.on('activate', () => {
   }
 })
 
+// eslint-disable-next-line no-new
 new Vue({
   el: '#app',
   data: {

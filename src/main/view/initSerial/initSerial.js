@@ -1,11 +1,11 @@
 'use strict'
-window.$ = window.jQuery = require('../../../public/js/jquery.min.js')
 
-let SerialPort = require('serialport')
-let port = null
-let portObj = null
-var xmlHttp
-var urlHead = 'http://localhost:8080/'
+window.$ = window.jQuery = require('../../../public/js/jquery.min.js');
+
+let SerialPort = require('serialport');
+let portObj = null;
+var xmlHttp;
+var urlHead = 'http://localhost:8080/';
 
 SerialPort.list((err, ports) => {
   for (let item of ports) {
@@ -13,6 +13,16 @@ SerialPort.list((err, ports) => {
   }
   console.log(ports)
 })
+
+function freshPort() {
+  SerialPort.list((err, ports) => {
+    $("#disabledSelect").children("option").remove();
+    for (let item of ports) {
+      $('.com').append(`<option id="option-item">${item.comName}</option>`)
+    }
+    console.log(ports)
+  })
+}
 
 function serialComm(data) {
   // let x = document.getElementById("disabledSelect");
@@ -33,9 +43,15 @@ function serialComm(data) {
 
     if (portObj.isOpen) {
       $('.receive-windows').append('端口成功连接！！！正在监听数据');
-      portObj.on('data', function(data){
+      var flag = true;
+      portObj.on('data', function (data) {
         console.log('data received: ' + data);
-        // $('.receive-windows').append(data);
+        if(flag){
+          $('.receive-windows').append(data + '');
+          $('.receive-windows').append('监听到模块未初始化信号');
+          alert('监听到模块未初始化信号');
+          flag = false;
+        }
       })
     } else {
       $('.receive-windows').append('端口连接失败，端口或已被占用。')
@@ -53,11 +69,12 @@ function serialComm(data) {
 
 // 开始初始化设备
 function startInitSerial() {
-  var head = [0xAF, 0x49, 0x35, 0xEA, 0xF0]
-  var end = [0x31, 0x24, 0x63, 0xA4]
-  var model_id = vue.inputModelId
-  var middle = stringToBytes(model_id)
-  var serial_number = new Array()
+  var head = [0xAF, 0x49, 0x35, 0xEA, 0xF0];
+  var end = [0x31, 0x24, 0x63, 0xA4];
+  var model_id = vue.inputModelId;
+  console.log(model_id);
+  var middle = u16Count(model_id);
+  var serial_number = new Array();
 
   for (var i = 0; i < 13; i++) {
     if (i < 5) { serial_number[i] = head[i] }
@@ -68,24 +85,64 @@ function startInitSerial() {
   if (portObj != null) {
     portObj.write(serial_number, function (err) {
       if (err) {
-        return console.log('Error on write: ', err.message)
+        return console.log('Error on write: ', err.message);
       }
-      console.log('message written')
+      console.log('message written');
     })
   } else {
-    $('.receive-windows').append('请先连接串口！')
+    $('.receive-windows').append('请先连接串口！');
   }
 }
 
 // 字符串转byte数组
 function stringToBytes(str) {
-  var num = str + ''
-  var arr = new Array()
+  var num = str + '';
+  var arr = new Array();
   for (var i = 0; i < num.length; i++) {
-    arr.push(num.charCodeAt(i))
+    arr.push(num.charCodeAt(i));
   }
-  return arr
+  return arr;
 }
+
+function u16Count(a) {
+  var c = a + '';
+  console.log(c);
+  var arr = new Array();
+  for (var i = 0; i < 4; i++) {
+    var temp;
+    if (i == 0) {
+      temp = c.substring(0, 2);
+      console.log(temp);
+      arr[i] = parseInt(c.substring(0, 2), 16);
+    }
+    if (i == 1) {
+      temp = c.substring(2, 4);
+      console.log(temp);
+      arr[i] = parseInt(c.substring(2, 4), 16);
+    }
+    if (i == 2) {
+      temp = c.substring(4, 6);
+      console.log(temp);
+      arr[i] = parseInt(c.substring(4, 6), 16);
+    }
+    if (i == 3) {
+      temp = c.substring(6, 8);
+      console.log(temp);
+      arr[i] = parseInt(c.substring(6, 8), 16);
+    }
+    console.log(arr[i]);
+  }
+  return arr;
+}
+
+function u16CountToString(num) {
+  num = parseInt(num, 16) + 1;
+  console.log(num);
+  var a = num.toString(16);
+  console.log(a);
+  return a;
+}
+
 // 创建ajax的核心对象creatxmlhttpRequest
 function createXMLhttpRequest() {
   xmlHttp = new XMLHttpRequest()
@@ -143,7 +200,7 @@ function callBack() {
       var responseText = xmlHttp.responseText
       console.log(responseText)
       var jsonObj = jQuery.parseJSON(responseText)
-      if(jsonObj.code == 1){
+      if (jsonObj.code == 1) {
         var responseData = jsonObj.data
         var message = ''
         for (var i = 0; i < responseData.length; i++) {
@@ -151,11 +208,11 @@ function callBack() {
             ' model_date:' + responseData[i].model_date +
             ' model_serial_number:' + responseData[i].serial_number + '\n'
         }
-        var newId = responseData[responseData.length - 1].model_id + 1
-        console.log(newId)
-        vue.inputModelId = newId
+        var newId = u16CountToString(responseData[responseData.length - 1].serial_number);
+        console.log(newId);
+        vue.inputModelId = newId;
         getModelKindRequest();
-      }else if(jsonObj.code == 0){
+      } else if (jsonObj.code == 0) {
         alert('获取ModelKind数据失败');
       }
     }
@@ -170,6 +227,7 @@ function cb_finishInit() {
       var jsonObj = jQuery.parseJSON(responseText)
       var responseData = jsonObj.msg
       $('.receive-windows').append(responseData)
+      alert('模块数据新增成功！');
       getModelInfoRequest()
     }
   }
@@ -183,6 +241,7 @@ function cb_getModelKind() {
     var jsonObj = jQuery.parseJSON(responseText);
     if (jsonObj.code == 1) {
       var responseData = jsonObj.data;
+      $("#inputName").children("option").remove();
       for (let item of responseData) {
         $('#inputName').append(`<option>${item.model_kind_name_cn}</option>`);
       }
