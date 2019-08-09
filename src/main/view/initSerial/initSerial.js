@@ -5,48 +5,48 @@ window.$ = window.jQuery = require('../../../public/js/jquery.min.js');
 let SerialPort = require('serialport');
 let portObj = null;
 var xmlHttp;
-var urlHead = 'http://localhost:8080/';
+var urlHead = 'http://192.168.199.101:8080/';
 
 SerialPort.list((err, ports) => {
   for (let item of ports) {
     $('.com').append(`<option>${item.comName}</option>`)
   }
-  console.log(ports)
-})
+  console.log(ports);
+});
 
-function freshPort() {
+function freshPort () {
   SerialPort.list((err, ports) => {
-    $("#disabledSelect").children("option").remove();
+    $('#disabledSelect').children('option').remove()
     for (let item of ports) {
-      $('.com').append(`<option id="option-item">${item.comName}</option>`)
+      $('.com').append(`<option id="option-item">${item.comName}</option>`);
     }
-    console.log(ports)
-  })
+    console.log(ports);
+  });
 }
 
-function serialComm(data) {
+function serialComm (data) {
   // let x = document.getElementById("disabledSelect");
   // let COM = x.options[x.selectedIndex];
   let COM = $('#disabledSelect option:selected').text();
 
-  let BaudRate = $('#BaudRate').val()
-  console.log('点击确定事件')
-  console.log(COM)
-  console.log(BaudRate)
-  $('.receive-windows').text(`打开串口: ${COM}, 波特率: ${BaudRate}`)
+  let BaudRate = $('#BaudRate').val();
+  console.log('点击确定事件');
+  console.log(COM);
+  console.log(BaudRate);
+  $('.receive-windows').text('打开串口: ${COM}, 波特率: ${BaudRate}');
   $('.receive-windows').append('<br/>=======================================<br/>')
 
-  portObj = new SerialPort(COM, { baudRate: parseInt(BaudRate) })
+  portObj = new SerialPort(COM, { baudRate: parseInt(BaudRate) });
 
   portObj.on('open', function () {
-    $('.receive-windows').append('端口正在开启！')
+    $('.receive-windows').append('端口正在开启！');
 
     if (portObj.isOpen) {
       $('.receive-windows').append('端口成功连接！！！正在监听数据');
       var flag = true;
       portObj.on('data', function (data) {
         console.log('data received: ' + data);
-        if(flag){
+        if (flag) {
           $('.receive-windows').append(data + '');
           $('.receive-windows').append('监听到模块未初始化信号');
           alert('监听到模块未初始化信号');
@@ -54,21 +54,20 @@ function serialComm(data) {
         }
       })
     } else {
-      $('.receive-windows').append('端口连接失败，端口或已被占用。')
-      alert('端口连接失败，端口或已被占用。')
+      $('.receive-windows').append('端口连接失败，端口或已被占用。');
+      alert('端口连接失败，端口或已被占用。');
     }
-  })
+  });
 
   // 打开错误将会发出一个错误事件
   portObj.on('error', function (err) {
-    console.log('Error: ', err.message)
-    $('.receive-windows').append(err.message)
-  })
+    console.log('Error: ', err.message);
+    $('.receive-windows').append(err.message);
+  });
 }
 
-
 // 开始初始化设备
-function startInitSerial() {
+function startInitSerial () {
   var head = [0xAF, 0x49, 0x35, 0xEA, 0xF0];
   var end = [0x31, 0x24, 0x63, 0xA4];
   var model_id = vue.inputModelId;
@@ -77,9 +76,9 @@ function startInitSerial() {
   var serial_number = new Array();
 
   for (var i = 0; i < 13; i++) {
-    if (i < 5) { serial_number[i] = head[i] }
-    if (i >= 5 && i < 9) { serial_number[i] = middle[i - 5] }
-    if (i >= 9) { serial_number[i] = end[i - 9] }
+    if (i < 5) { serial_number[i] = head[i]; }
+    if (i >= 5 && i < 9) { serial_number[i] = middle[i - 5]; }
+    if (i >= 9) { serial_number[i] = end[i - 9]; }
   }
 
   if (portObj != null) {
@@ -88,14 +87,14 @@ function startInitSerial() {
         return console.log('Error on write: ', err.message);
       }
       console.log('message written');
-    })
+    });
   } else {
     $('.receive-windows').append('请先连接串口！');
   }
 }
 
 // 字符串转byte数组
-function stringToBytes(str) {
+function stringToBytes (str) {
   var num = str + '';
   var arr = new Array();
   for (var i = 0; i < num.length; i++) {
@@ -104,38 +103,19 @@ function stringToBytes(str) {
   return arr;
 }
 
-function u16Count(a) {
+function u16Count (a) {
   var c = a + '';
   console.log(c);
   var arr = new Array();
   for (var i = 0; i < 4; i++) {
     var temp;
-    if (i == 0) {
-      temp = c.substring(0, 2);
-      console.log(temp);
-      arr[i] = parseInt(c.substring(0, 2), 16);
-    }
-    if (i == 1) {
-      temp = c.substring(2, 4);
-      console.log(temp);
-      arr[i] = parseInt(c.substring(2, 4), 16);
-    }
-    if (i == 2) {
-      temp = c.substring(4, 6);
-      console.log(temp);
-      arr[i] = parseInt(c.substring(4, 6), 16);
-    }
-    if (i == 3) {
-      temp = c.substring(6, 8);
-      console.log(temp);
-      arr[i] = parseInt(c.substring(6, 8), 16);
-    }
+    arr[i] = parseInt(c.substring(i * 2, i * 2 + 2), 16)
     console.log(arr[i]);
   }
   return arr;
 }
 
-function u16CountToString(num) {
+function u16CountToString (num) {
   num = parseInt(num, 16) + 1;
   console.log(num);
   var a = num.toString(16);
@@ -144,12 +124,12 @@ function u16CountToString(num) {
 }
 
 // 创建ajax的核心对象creatxmlhttpRequest
-function createXMLhttpRequest() {
-  xmlHttp = new XMLHttpRequest()
+function createXMLhttpRequest () {
+  xmlHttp = new XMLHttpRequest();
 }
 
-function rq_finishInit(inputModelId, model_kind, model_kind_name, firmware_version, pcb_version) {
-  console.log("开始新增设备");
+function rq_finishInit (inputModelId, model_kind, model_kind_name, firmware_version, pcb_version) {
+  console.log('开始新增设备');
   var data = new FormData();
   data.set('serial_number', inputModelId);
   data.set('model_kind', model_kind);
@@ -159,54 +139,54 @@ function rq_finishInit(inputModelId, model_kind, model_kind_name, firmware_versi
   postInitModel(data);
 }
 
-function getModelInfoRequest() {
+function getModelInfoRequest () {
   // 发送请求
-  sendRequest(urlHead + 'getModelInfo')
+  sendRequest(urlHead + 'getModelInfo');
 }
 
-function getModelKindRequest() {
-  var url = urlHead + 'getModelKind'
+function getModelKindRequest () {
+  var url = urlHead + 'getModelKind';
   createXMLhttpRequest();
   xmlHttp.open('get', url, true);
   xmlHttp.send(null);
   xmlHttp.onreadystatechange = cb_getModelKind;
 }
 
-function sendRequest(url) {
-  createXMLhttpRequest()
-  xmlHttp.open('get', url, true) //  true 就是异步NN
+function sendRequest (url) {
+  createXMLhttpRequest();
+  xmlHttp.open('get', url, true) ;//  true 就是异步NN
   //   send()里面也可以指定发送内容
-  xmlHttp.send(null) //  发送
-  xmlHttp.onreadystatechange = callBack // 回调函数
+  xmlHttp.send(null) ;//  发送
+  xmlHttp.onreadystatechange = callBack; // 回调函数
 }
 
-function postInitModel(data) {
+function postInitModel (data) {
   // 发送post请求
-  postRequest((urlHead + 'initModel'), data)
+  postRequest((urlHead + 'initModel'), data);
 }
 
-function postRequest(url, data) {
-  console.log('开始post' + url + '请求')
-  createXMLhttpRequest()
-  xmlHttp.open('post', url, true)
-  xmlHttp.send(data)
-  xmlHttp.onreadystatechange = cb_finishInit
+function postRequest (url, data) {
+  console.log('开始post' + url + '请求');
+  createXMLhttpRequest();
+  xmlHttp.open('post', url, true);
+  xmlHttp.send(data);
+  xmlHttp.onreadystatechange = cb_finishInit;
 }
 
-function callBack() {
+function callBack () {
   // 当 readyState 等于 4 且状态为 200 时，表示响应已就绪：
   if (xmlHttp != null) {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      var responseText = xmlHttp.responseText
-      console.log(responseText)
-      var jsonObj = jQuery.parseJSON(responseText)
+      var responseText = xmlHttp.responseText;
+      console.log(responseText);
+      var jsonObj = jQuery.parseJSON(responseText);
       if (jsonObj.code == 1) {
-        var responseData = jsonObj.data
-        var message = ''
+        var responseData = jsonObj.data;
+        var message = '';
         for (var i = 0; i < responseData.length; i++) {
           message = message + 'model_id:' + responseData[i].model_id +
             ' model_date:' + responseData[i].model_date +
-            ' model_serial_number:' + responseData[i].serial_number + '\n'
+            ' model_serial_number:' + responseData[i].serial_number + '\n';
         }
         var newId = u16CountToString(responseData[responseData.length - 1].serial_number);
         console.log(newId);
@@ -219,29 +199,29 @@ function callBack() {
   }
 }
 
-function cb_finishInit() {
+function cb_finishInit () {
   if (xmlHttp != null) {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      var responseText = xmlHttp.responseText
-      console.log(responseText)
-      var jsonObj = jQuery.parseJSON(responseText)
-      var responseData = jsonObj.msg
-      $('.receive-windows').append(responseData)
+      var responseText = xmlHttp.responseText;
+      console.log(responseText);
+      var jsonObj = jQuery.parseJSON(responseText);
+      var responseData = jsonObj.msg;
+      $('.receive-windows').append(responseData);
       alert('模块数据新增成功！');
-      getModelInfoRequest()
+      getModelInfoRequest();
     }
   }
 }
 
-function cb_getModelKind() {
-  console.log("请求model种类数据成功");
+function cb_getModelKind () {
+  console.log('请求model种类数据成功');
   if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
     var responseText = xmlHttp.responseText;
     console.log(responseText);
     var jsonObj = jQuery.parseJSON(responseText);
     if (jsonObj.code == 1) {
       var responseData = jsonObj.data;
-      $("#inputName").children("option").remove();
+      $('#inputName').children('option').remove();
       for (let item of responseData) {
         $('#inputName').append(`<option>${item.model_kind_name_cn}</option>`);
       }

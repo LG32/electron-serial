@@ -5,8 +5,9 @@
 <p>cnpm install --save serialport </p>
 <p>安装electron-rebuild, 因为serialport是根据系统环境编译的，当我们安装时，我们编译的成的是系统环境的serialport，所以我们需要重新编译成eletron的环境，所以我们需要electron-rebuild</p>
 <p>cnpm install --save-dev electron-rebuild</p>
-<p>重新编译, 因为我当前版本的electron是1.7.10的，所以我们重新把模块编译成适应1.7.10的, 这里记得要根据你的electron版本编译，我的版本是 2.0.4</p>
+<p>重新编译, 这里记得要根据你的electron版本编译，我的版本是 2.0.4</p>
 <p>./node_modules/.bin/electron-rebuild -v 2.0.4</p>
+<p>如果不重新编译就有可能出现Error:A dynamic link library(DLL) initiallzation routine failed这样的报错</p>
 
 <p>問題：打包完成后應用程序空白並提示not allowed to load local resource,這傻逼問題困擾了我一天了，結果我認爲應該是在打包時沒有將資源打進包中的原因。</p>
 <p>解決方法：在package.json文件中的files中添加上資源存放的路徑。</p>

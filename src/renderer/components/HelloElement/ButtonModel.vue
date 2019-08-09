@@ -15,9 +15,9 @@
 <script>
     export default {
     data: () => ({
-      show: true
+        show: true
     })
-  }
+}
 </script>
 
 <style>
