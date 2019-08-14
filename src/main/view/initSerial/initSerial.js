@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 
 window.$ = window.jQuery = require('../../../public/js/jquery.min.js');
 
@@ -9,14 +9,14 @@ var urlHead = 'http://192.168.199.101:8080/';
 
 SerialPort.list((err, ports) => {
   for (let item of ports) {
-    $('.com').append(`<option>${item.comName}</option>`)
+    $('.com').append(`<option>${item.comName}</option>`);
   }
   console.log(ports);
 });
 
 function freshPort () {
   SerialPort.list((err, ports) => {
-    $('#disabledSelect').children('option').remove()
+    $('#disabledSelect').children('option').remove();
     for (let item of ports) {
       $('.com').append(`<option id="option-item">${item.comName}</option>`);
     }
@@ -33,8 +33,8 @@ function serialComm (data) {
   console.log('点击确定事件');
   console.log(COM);
   console.log(BaudRate);
-  $('.receive-windows').text('打开串口: ${COM}, 波特率: ${BaudRate}');
-  $('.receive-windows').append('<br/>=======================================<br/>')
+  $('.receive-windows').text(`打开串口: ${COM}, 波特率: ${BaudRate}`);
+  $('.receive-windows').append('<br/>=======================================<br/>');
 
   portObj = new SerialPort(COM, { baudRate: parseInt(BaudRate) });
 
@@ -73,6 +73,11 @@ function startInitSerial () {
   var model_id = vue.inputModelId;
   console.log(model_id);
   var middle = u16Count(model_id);
+  for(var i = 0; i < middle.length/2; i++){
+    var temp = middle[i];
+    middle[i] = middle[middle.length - 1 - i];
+    middle[middle.length - 1 - i] = temp;
+  }
   var serial_number = new Array();
 
   for (var i = 0; i < 13; i++) {
@@ -109,7 +114,7 @@ function u16Count (a) {
   var arr = new Array();
   for (var i = 0; i < 4; i++) {
     var temp;
-    arr[i] = parseInt(c.substring(i * 2, i * 2 + 2), 16)
+    arr[i] = parseInt(c.substring(i * 2, i * 2 + 2), 16);
     console.log(arr[i]);
   }
   return arr;
@@ -119,7 +124,13 @@ function u16CountToString (num) {
   num = parseInt(num, 16) + 1;
   console.log(num);
   var a = num.toString(16);
+  var len = a.length;
   console.log(a);
+  console.log(a.length);
+  for(var i = 0; i < (8 - len); i++){
+    a = '0' + a;
+    console.log("补0");
+  }
   return a;
 }
 
