@@ -14,196 +14,198 @@
 </head>
 
 <body>
-    <div class="body-box" id="form">
-        <div class="tool-bar">
-            <div class="select-data">
-                <div class="form-group">
-                    <label for="disabledSelect">选择串口</label>
-                    <select id="disabledSelect" class="form-control com" onclick="vue.freshPortListencer()">
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="BaudRate">波特率</label>
-                    <input type="text" class="form-control" id="BaudRate" value="115200">
-                </div>
+<div class="body-box" id="form">
+    <div class="tool-bar">
+        <div class="select-data">
+            <div class="form-group">
+                <label for="disabledSelect">选择串口</label>
+                <select id="disabledSelect" class="form-control com" onclick="vue.freshPortListencer()">
+                </select>
             </div>
-            <div class="submit-data">
-                <button class="btn btn-primary btn-block btn-submit" onclick="vue.serialPostCommListencer()">确定</button>
+            <div class="form-group">
+                <label for="BaudRate">波特率</label>
+                <input type="text" class="form-control" id="BaudRate" value="115200">
             </div>
         </div>
-        <div class="content-box">
-            <div class="send-box">
-                <h4 class="send-header">
-                    <label>初始化信息</label>
-                    <small>点击初始化设备按钮后，程序将每5秒发送一次初始化信号，当设备初始化成功后设备将会信号灯常亮，这时点击完成初始化，整个流程完成</small>
-                </h4>
-                <div class="send-windows">
-                    <form class="form-horizontal" style="width: 100%; margin-top: 10px">
-                        <div class="form-group">
-                            <label for="inputModelId" class="col-sm-2 control-label">模块ID</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" id="inputId" value="{{inputModelId}}" v-model="inputModelId"
-                                    ref="inputId" v-if="checkState" readonly="readonly" placeholder="输入四位id号">
+        <div class="submit-data">
+            <button class="btn btn-primary btn-block btn-submit" onclick="vue.serialPostCommListencer()">确定</button>
+        </div>
+    </div>
+    <div class="content-box">
+        <div class="send-box">
+            <h4 class="send-header">
+                <label>初始化信息</label>
+                <small>点击初始化设备按钮后，程序将每5秒发送一次初始化信号，当设备初始化成功后设备将会信号灯常亮，这时点击完成初始化，整个流程完成</small>
+            </h4>
+            <div class="send-windows">
+                <form class="form-horizontal" style="width: 100%; margin-top: 10px">
+                    <div class="form-group">
+                        <label for="inputModelId" class="col-sm-2 control-label">模块ID</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" id="inputId" value="{{inputModelId}}" v-model="inputModelId"
+                                   ref="inputId" v-if="checkState" readonly="readonly" placeholder="输入四位id号">
 
-                                <input class="form-control" id="inputId" value="{{inputModelId}}" v-model="inputModelId"
-                                    ref="inputId" v-if="!checkState" placeholder="输入四位id号">
-                            </div>
+                            <input class="form-control" id="inputId" value="{{inputModelId}}" v-model="inputModelId"
+                                   ref="inputId" v-if="!checkState" placeholder="输入四位id号">
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-8">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" checked="1" id="autoCheckbox"
-                                            onclick="vue.checkboxListencer()" v-model="checkState"> 自动生成ID
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputModelName" class="col-sm-2 control-label">模块名称</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" id="inputName"></select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputFirmwareVersion" class="col-sm-2 control-label">固件版本</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" id="inputRemark" placeholder="固件版本"
-                                    value="{{inputFirmwareVersion}}" ref="inputRemark" v-model="inputFirmwareVersion">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPcbVersion" class="col-sm-2 control-label">Pcb版本</label>
-                            <div class="col-sm-8">
-                                <input class="form-control" id="inputPcb" placeholder="Pcb版本"
-                                    value="{{inputPcbVersion}}" ref="inputPcb" v-model="inputPcbVersion">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="send-btn">
-                    <div class="btn-box">
-                        <div class="btn btn-warning btn-send" onclick="vue.startInit()">开始初始化</div>&nbsp&nbsp&nbsp
-                        <div class="btn btn-danger btn-reset" onclick="vue.finishInit()">完成初始化</div>&nbsp&nbsp&nbsp
-                        <div class="btn btn-normal" onclick="vue.testBtn()">测试</div>
                     </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" checked="1" id="autoCheckbox"
+                                           onclick="vue.checkboxListencer()" v-model="checkState"> 自动生成ID
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputModelName" class="col-sm-2 control-label">模块名称</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="inputName"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputFirmwareVersion" class="col-sm-2 control-label">固件版本</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" id="inputRemark" placeholder="固件版本"
+                                   value="{{inputFirmwareVersion}}" ref="inputRemark" v-model="inputFirmwareVersion">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputPcbVersion" class="col-sm-2 control-label">Pcb版本</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" id="inputPcb" placeholder="Pcb版本"
+                                   value="{{inputPcbVersion}}" ref="inputPcb" v-model="inputPcbVersion">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="send-btn">
+                <div class="btn-box">
+                    <div class="btn btn-warning btn-send" onclick="vue.startInit()">开始初始化</div>
+                    &nbsp&nbsp&nbsp
+                    <div class="btn btn-danger btn-reset" onclick="vue.finishInit()">完成初始化</div>
+                    &nbsp&nbsp&nbsp
+                    <div class="btn btn-normal" onclick="vue.cleanBtn()">清空信息</div>
                 </div>
             </div>
+        </div>
 
-            <div class="receive-box">
-                <h4 class="send-header">
-                    <label>接受信息</label>
-                </h4>
-                <div class="receive-windows">
-                </div>
+        <div class="receive-box">
+            <h4 class="send-header">
+                <label>接受信息</label>
+            </h4>
+            <div class="receive-windows">
             </div>
         </div>
     </div>
+</div>
 </body>
 <script>
-    var t1;
-    var vue = new Vue({
-        el: '#form',
-        data: {
-            welcomeStr: 'Hello Vue.js!',
-            inputModelId: '',
-            inputModelName: '',
-            inputFirmwareVersion: 'v0.0.1',
-            inputPcbVersion: 'v0.0.1',
-            message: '',
-            checkState: true,
-            freshFlag: true,
-        },
+  var t1
+  var vue = new Vue({
+    el: '#form',
+    data: {
+      welcomeStr: 'Hello Vue.js!',
+      inputModelId: '',
+      inputModelName: '',
+      inputFirmwareVersion: 'v0.0.1',
+      inputPcbVersion: 'v0.0.1',
+      message: '',
+      checkState: true,
+      freshFlag: true
+    },
 
-        created: function () {
-            console.log('vue is running' + this.welcomeStr);
-            // freshPort();
-            getModelInfoRequest();
-        },
+    created: function () {
+      console.log('vue is running' + this.welcomeStr)
+      // freshPort();
+      getModelInfoRequest()
+    },
 
-        methods: {
-            finishInit: function () {
-                console.log("点击完成初始化");
-                var x = document.getElementById("inputName");
-                var modelKindId = x.selectedIndex + 1;
-                var inputModelIdStr = this.inputModelId + '';
-                this.inputModelName = $('#inputName option:selected').text();
-                console.log("inputModelIdStr" + inputModelIdStr);
-                console.log("inputModelName" + this.inputModelName);
-                console.log("inputFirmwareVersion" + this.inputFirmwareVersion);
-                console.log("inputPcbVersion" + this.inputPcbVersion);
+    methods: {
+      finishInit: function () {
+        console.log('点击完成初始化')
+        var x = document.getElementById('inputName')
+        var modelKindId = x.selectedIndex + 1
+        var inputModelIdStr = this.inputModelId + ''
+        this.inputModelName = $('#inputName option:selected').text()
+        console.log('inputModelIdStr' + inputModelIdStr)
+        console.log('inputModelName' + this.inputModelName)
+        console.log('inputFirmwareVersion' + this.inputFirmwareVersion)
+        console.log('inputPcbVersion' + this.inputPcbVersion)
 
-                if (inputModelIdStr.length == 8 &&
-                    this.inputFirmwareVersion != '' &&
-                    this.inputPcbVersion != '') {
+        // eslint-disable-next-line eqeqeq
+        if (inputModelIdStr.length == 8 &&
+          this.inputFirmwareVersion !== '' &&
+          // eslint-disable-next-line eqeqeq
+          this.inputPcbVersion != '') {
 
-                    console.log("开始新增请求");
-                    alert('模块id' + this.inputModelId +
-                        ' 模块名称' + this.inputModelName +
-                        ' 固件版本' + this.inputFirmwareVersion +
-                        ' Pcb版本' + this.inputPcbVersion);
+          console.log('开始新增请求')
+          alert('模块id' + this.inputModelId +
+            ' 模块名称' + this.inputModelName +
+            ' 固件版本' + this.inputFirmwareVersion +
+            ' Pcb版本' + this.inputPcbVersion)
 
-                    if (t1 != undefined) {
-                        window.clearTimeout(t1);
-                    }
+          if (t1 != undefined) {
+            window.clearTimeout(t1)
+          }
 
-                    rq_finishInit(this.inputModelId, modelKindId, this.inputModelName, this.inputFirmwareVersion, this.inputPcbVersion);
+          rq_finishInit(this.inputModelId, modelKindId, this.inputModelName, this.inputFirmwareVersion, this.inputPcbVersion)
 
-                } else if (inputModelIdStr.length != 8) {
-                    alert("请输入8位十六进制id");
-                } else if (this.inputPcbVersion == '' || this.inputFirmwareVersion == '') {
-                    alert("请补全信息");
-                }
-            },
-
-            startInit: function () {
-                console.log("点击开始初始化");
-                console.log(this.inputModelId);
-                var inputModelIdStr = this.inputModelId + '';
-
-                if (inputModelIdStr.length == 8) {
-                    $('.receive-windows').append("初始化信号发送完成，请注意信号灯是否常亮!");
-                    for (var i = 0; i < 10; i++) {
-                        t1 = window.setTimeout("startInitSerial()", 500);
-                    }
-                } else {
-                    $('.receive-windows').append("请输入8位十六进制id");
-                    alert("请输入8位十六进制id");
-                }
-
-            },
-
-            testBtn: function(){
-              u16Count();
-              u16CountToString('f0000000');
-            },
-
-            serialPostCommListencer: function (data) {
-                console.log("点击端口连接");
-                serialComm(data);
-            },
-
-            checkboxListencer: function () {
-                if (this.checkState) {
-                    this.checkState = false;
-                } else {
-                    this.checkState = true;
-                }
-                console.log("checkState is chance: " + this.checkState);
-            },
-
-            freshPortListencer: function(){
-                if(this.freshFlag){
-                    console.log("刷新串口");
-                    freshPort();
-                    this.freshFlag = false;
-                }else{
-                    this.freshFlag = true;
-                }
-                
-            }
+        } else if (inputModelIdStr.length != 8) {
+          alert('请输入8位十六进制id')
+        } else if (this.inputPcbVersion == '' || this.inputFirmwareVersion == '') {
+          alert('请补全信息')
         }
-    })
+      },
+
+      startInit: function () {
+        console.log('点击开始初始化')
+        console.log(this.inputModelId)
+        var inputModelIdStr = this.inputModelId + ''
+
+        if (inputModelIdStr.length == 8) {
+          $('.receive-windows').append(`<li>初始化信号发送完成，请注意信号灯是否常亮!</li>`)
+          for (var i = 0; i < 10; i++) {
+            t1 = window.setTimeout('startInitSerial()', 500)
+          }
+        } else {
+          $('.receive-windows').append(`<li>请输入8位十六进制id</li>`)
+          alert('请输入8位十六进制id')
+        }
+      },
+
+      cleanBtn: function () {
+        $('.receive-windows').empty()
+      },
+
+      serialPostCommListencer: function (data) {
+        console.log('点击端口连接')
+        serialComm(data)
+      },
+
+      checkboxListencer: function () {
+        if (this.checkState) {
+          this.checkState = false
+        } else {
+          this.checkState = true
+        }
+        console.log('checkState is chance: ' + this.checkState)
+      },
+
+      freshPortListencer: function () {
+        if (this.freshFlag) {
+          console.log('刷新串口')
+          freshPort()
+          this.freshFlag = false
+        } else {
+          this.freshFlag = true
+        }
+
+      }
+    }
+  })
 </script>
 </html>
